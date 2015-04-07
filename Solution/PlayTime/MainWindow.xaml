@@ -1,0 +1,18 @@
+﻿<Window x:Name="mWindow" x:Class="PlayTime.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Fun with WPF" Height="768" Width="1024" KeyDown="mWindow_KeyDown">
+    <Grid>
+        <Menu HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0.514,-0.032" Width="1006">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Open" Click="ProcessFileOpenClick"/>
+            </MenuItem>
+        </Menu>
+        <TreeView Margin="0,26,730,10">
+            <TreeViewItem Header="rootNode"/>
+            
+        </TreeView>
+        <TextBlock x:Name="txtBox" HorizontalAlignment="Left" Height="632" Margin="432,56,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="492"/>
+
+    </Grid>
+</Window>
