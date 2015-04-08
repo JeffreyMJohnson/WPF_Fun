@@ -35,15 +35,66 @@ namespace PlayTime
         {
             InitializeComponent();
             InitAtlasDoc();
+
             XmlNode groupsNode = rootNode.SelectSingleNode("groups");
             if (groupsNode != null)
             {
                 XmlElement groupNode = atlasDoc.CreateElement("group");
+                groupNode.SetAttribute("name", "idle");
+                AddSprite(groupNode, "0", 0, 0, 25, 25);
+                AddSprite(groupNode, "1", 28, 28, 25, 25);
+                AddSprite(groupNode, "2", 55, 55, 25, 25);
                 groupsNode.AppendChild(groupNode);
-                groupNode.AppendChild(CreateSpriteNode("0", 0, 0, 25, 25));
-                groupNode.AppendChild(CreateSpriteNode("1", 0, 0, 25, 25));
-                groupNode.AppendChild(CreateSpriteNode("2", 0, 0, 25, 25));
+
+                groupNode = atlasDoc.CreateElement("group");
+                groupNode.SetAttribute("name", "walk");
+                AddSprite(groupNode, "0", 0, 0, 25, 25);
+                AddSprite(groupNode, "1", 28, 28, 25, 25);
+                AddSprite(groupNode, "2", 55, 55, 25, 25);
+                groupsNode.AppendChild(groupNode);
             }
+
+            UpdateTreeView();
+        }
+
+
+        /// <summary>
+        /// creates s sprite child node and appends it to the given group node.
+        /// </summary>
+        /// <param name="groupNode">Group to append the new sprite child node to.</param>
+        /// <param name="id">Id string for the new sprite node.</param>
+        /// <param name="x">Minimum x coordinate for new sprite's bounding box on sprite sheet.</param>
+        /// <param name="y">Minimum y coordinate for new sprite's bounding box on sprite sheet.</param>
+        /// <param name="width">Width of new sprite's bounding box.</param>
+        /// <param name="height">Width of new sprite's bounding box.</param>
+        private void AddSprite(XmlNode groupNode, string id, int x, int y, int width, int height)
+        {
+            groupNode.AppendChild(CreateSpriteNode(id, x, y, width, height));
+        }
+
+        private void UpdateTreeView()
+        {
+            XmlNode groupsNode = rootNode.FirstChild;
+            
+            foreach(XmlNode groupNode in groupsNode.ChildNodes)
+            {
+                TreeViewItem item = new TreeViewItem();
+                item.Header = groupNode.Attributes.GetNamedItem("name").Value;
+
+                foreach(XmlElement spriteElement in groupNode.ChildNodes)
+                {
+                    TreeViewItem spriteId = new TreeViewItem();
+                    spriteId.Header = spriteElement.Attributes.GetNamedItem("id").Value;
+                    item.Items.Add(spriteId);
+                }
+
+                item.ExpandSubtree();
+
+                treeView.Items.Add(item);
+            }
+            
+            
+            
         }
 
         private static void InitAtlasDoc()
@@ -84,7 +135,7 @@ namespace PlayTime
             XmlAttribute att = atlasDoc.CreateAttribute("id");
             att.Value = id;
             spriteNode.SetAttributeNode(att);
-            
+
             att = atlasDoc.CreateAttribute("x");
             att.Value = x.ToString();
             spriteNode.SetAttributeNode(att);

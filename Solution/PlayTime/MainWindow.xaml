@@ -9,7 +9,7 @@
                 <MenuItem Header="_Open" Click="ProcessFileOpenClick"/>
             </MenuItem>
         </Menu>
-        <TreeView Margin="10,26,730,10" x:Name="treeView" />
+        <TreeView Margin="10,26,730,10" x:Name="treeView"></TreeView>
 
         <TextBlock x:Name="txtBox" HorizontalAlignment="Left" Height="632" Margin="432,56,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="492" RenderTransformOrigin="0.497,0.557"/>
 
