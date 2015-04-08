@@ -1,5 +1,15 @@
-﻿<?xml version="1.0" encoding="utf-8" ?> 
-<SpriteSheet filePath="foo.png" width="1024" height="768" page="1">
-  
-
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<SpriteSheet filePath="foo.png" width="1024" height="768" page="1" totalPages="1" isNormalized="false">
+ <groups>
+    <group name="idle" frameRate="30">
+      <sprite id="0" x="0" y="0" width="25" height="25"/>
+      <sprite id="1" x="28" y="28" width="25" height="25"/>
+      <sprite id="2" x="55" y="55" width="25" height="25"/>
+    </group>
+    <group name="walk" frameRate="30">
+      <sprite id="0" x="0" y="0" width="25" height="25"/>
+      <sprite id="1" x="28" y="28" width="25" height="25"/>
+      <sprite id="2" x="55" y="55" width="25" height="25"/>
+    </group>
+  </groups>
 </SpriteSheet>
