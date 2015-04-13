@@ -1,0 +1,19 @@
+﻿<UserControl x:Class="dataBinding.WpfTreeViewInPlaceEditControl"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:dataBinding"
+        x:Name="wpfTreeViewInPlaceEditControl">
+    <TreeView x:Name="treeView" ItemsSource="{Binding}" KeyDown="treeView_KeyDown" SelectedItemChanged="treeView_SelectedItemChanged">
+        <TreeView.Resources>
+            <HierarchicalDataTemplate DataType="{x:Type local:TreeViewParentItem}" ItemsSource="{Binding TreeViewChildrenItems}">
+                <Grid>
+                    <TextBlock x:Name="textBlockHeaderUnselected" Text="{Binding Name}" Margin="3,0"/>
+                    <TextBlock x:Name="textBlockHeaderSelected" Text="{Binding Name}" Margin="3,0" Visibility="Hidden" 
+                               MouseLeftButtonDown="textBlockHeaderSelected_MouseLeftButtonDown"/>
+                    <TextBox x:Name="editableTextBoxHeader" Visibility="Hidden" MinWidth="100" Text="{Binding Name, UpdateSourceTrigger=LostFocus}" LostFocus="editableTextBoxHeader_LostFocus"
+                             IsVisibleChanged="editableTextBoxHeader_IsVisibleChanged" KeyDown="editableTextBoxHeader_KeyDown"/>
+                </Grid>
+            </HierarchicalDataTemplate>
+        </TreeView.Resources>
+    </TreeView>
+</UserControl>

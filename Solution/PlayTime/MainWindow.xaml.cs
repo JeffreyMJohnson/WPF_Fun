@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -22,41 +21,125 @@ namespace PlayTime
     /// </summary>
     public partial class MainWindow : Window
     {
-        private static XmlDocument atlasDoc = new XmlDocument();
-        private static XmlElement rootNode;
+        private XmlDocument atlasDoc = new XmlDocument();
+        private XmlElement mRootNode;
+        private XmlElement mGroupsNode;
+        private ContextMenu mGroupNameContextMenu;
         private const string SPRITE_SHEET_FILE_PATH = "foo.png";
         private const int SPRITE_SHEET_WIDTH = 900;
         private const int SPRITE_SHEET_HEIGHT = 600;
-        private static int mPageCount = 1;
-        private static bool mNormalizeUV = false;
+        private int mPageCount = 1;
+        private bool mNormalizeUV = false;
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("foo");
+        }
 
         public MainWindow()
         {
             InitializeComponent();
             InitAtlasDoc();
+            //InitContextMenu();
+            //XmlNode groupsNode = rootNode.SelectSingleNode("groups");
+            //if (groupsNode != null)
+            //{
+            //    XmlElement groupNode = atlasDoc.CreateElement("group");
+            //    groupNode.SetAttribute("name", "idle");
+            //    AddSprite(groupNode, "0", 0, 0, 25, 25);
+            //    AddSprite(groupNode, "1", 28, 28, 25, 25);
+            //    AddSprite(groupNode, "2", 55, 55, 25, 25);
+            //    groupsNode.AppendChild(groupNode);
 
-            XmlNode groupsNode = rootNode.SelectSingleNode("groups");
-            if (groupsNode != null)
-            {
-                XmlElement groupNode = atlasDoc.CreateElement("group");
-                groupNode.SetAttribute("name", "idle");
-                AddSprite(groupNode, "0", 0, 0, 25, 25);
-                AddSprite(groupNode, "1", 28, 28, 25, 25);
-                AddSprite(groupNode, "2", 55, 55, 25, 25);
-                groupsNode.AppendChild(groupNode);
-
-                groupNode = atlasDoc.CreateElement("group");
-                groupNode.SetAttribute("name", "walk");
-                AddSprite(groupNode, "0", 0, 0, 25, 25);
-                AddSprite(groupNode, "1", 28, 28, 25, 25);
-                AddSprite(groupNode, "2", 55, 55, 25, 25);
-                groupsNode.AppendChild(groupNode);
-            }
+            //    groupNode = atlasDoc.CreateElement("group");
+            //    groupNode.SetAttribute("name", "walk");
+            //    AddSprite(groupNode, "0", 0, 0, 25, 25);
+            //    AddSprite(groupNode, "1", 28, 28, 25, 25);
+            //    AddSprite(groupNode, "2", 55, 55, 25, 25);
+            //    groupsNode.AppendChild(groupNode);
+            //}
 
             UpdateTreeView();
+
+           // double dpi = 96;
+           // int width = 128;
+           // int height = 128;
+            
+          
+           //// byte[] pixelData = new byte[width * height];
+           // Color[] pixelData = new Color[width * height];
+           // for (int y = 0; y < height; y++)
+           // {
+           //     int yIndex = y * width;
+           //     for (int x = 0; x < width; x++)
+           //     {
+           //         //pixelData[x + yIndex] = 
+           //     }
+           // }
+           // BitmapSource bmpSource = BitmapSource.Create(width, height, dpi, dpi, PixelFormats.Gray8, null, pixelData, width);
+
+           // imageContainer.Width = width + 10;
+           // imageContainer.Height = height + 10;
+            
+           // imageContainer.Source = bmpSource;
+
+            BitmapImage bmp = new BitmapImage();
+            bmp.BeginInit();
+            bmp.UriSource = new Uri(@"c:\Users\Jeff\Documents\GitHub\2D_Retro_Clone\resources\images\galaxian.png");
+            bmp.EndInit();
+
+            PixelFormat format = bmp.Format;
+            int width = (int)bmp.Width;
+            int height = (int)bmp.Height;
+            int stride = 0;
+            if (format == PixelFormats.Bgra32)
+            {
+                stride = width * 4;
+            }
+
+            Byte[] b = new Byte[stride * height];
+
+            bmp.CopyPixels(b, stride, 0);
+
+            for (int i = 0; i < b.Length; i++ )
+            {
+                if (b[i] == 0 &&
+                    b[++i] == 0 &&
+                    b[++i] == 0 && 
+                    b[++i] == 255)
+                {
+                    b[i] = 0;
+                }
+            }
+            BitmapSource b2 = BitmapSource.Create(width, height, bmp.DpiX, bmp.DpiY, format, null, b, stride);
+            imageContainer.Source = bmp;
+            img2Container.Source = b2;
+            txtBlock.Text = bmp.Format.ToString();
         }
 
+        private void InitContextMenu()
+        {
+            InitGroupNameContextMenu();
+        }
+
+        private void InitGroupNameContextMenu()
+        {
+            mGroupNameContextMenu = new ContextMenu();
+            MenuItem mi = new MenuItem();
+            mi.Header = "_Rename Group";
+            mi.Click += GroupRenameClick;
+            mGroupNameContextMenu.Items.Add(mi);
+        }
+
+        private void GroupRenameClick(object sender, EventArgs e)
+        {
+            TreeViewItem m = sender as TreeViewItem;
+            if (m != null)
+            {
+                Console.WriteLine(m.Name);
+
+            }
+        }
 
         /// <summary>
         /// creates s sprite child node and appends it to the given group node.
@@ -74,14 +157,19 @@ namespace PlayTime
 
         private void UpdateTreeView()
         {
-            XmlNode groupsNode = rootNode.FirstChild;
-            
-            foreach(XmlNode groupNode in groupsNode.ChildNodes)
+            XmlNode groupsNode = mRootNode.FirstChild;
+            TreeViewItem root = new TreeViewItem();
+            root.Header = "SpriteSheet";
+            int counter = 0;
+            foreach (XmlNode groupNode in groupsNode.ChildNodes)
             {
                 TreeViewItem item = new TreeViewItem();
                 item.Header = groupNode.Attributes.GetNamedItem("name").Value;
-
-                foreach(XmlElement spriteElement in groupNode.ChildNodes)
+                //item.ContextMenu = mGroupNameContextMenu;
+                item.Name = "group" + counter.ToString();
+                counter++;
+                item.MouseRightButtonDown += GroupRenameClick;
+                foreach (XmlElement spriteElement in groupNode.ChildNodes)
                 {
                     TreeViewItem spriteId = new TreeViewItem();
                     spriteId.Header = spriteElement.Attributes.GetNamedItem("id").Value;
@@ -90,46 +178,52 @@ namespace PlayTime
 
                 item.ExpandSubtree();
 
-                treeView.Items.Add(item);
+                root.Items.Add(item);
+                root.ExpandSubtree();
             }
-            
-            
-            
+            treeView.Items.Add(root);
+
+
         }
 
-        private static void InitAtlasDoc()
+
+        private void InitAtlasDoc()
         {
-            rootNode = atlasDoc.CreateElement("SpriteSheet");
-            atlasDoc.AppendChild(rootNode);
+            mRootNode = atlasDoc.CreateElement("SpriteSheet");
+            atlasDoc.AppendChild(mRootNode);
             XmlAttribute att = atlasDoc.CreateAttribute("filePath");
             att.Value = SPRITE_SHEET_FILE_PATH;
-            rootNode.SetAttributeNode(att);
+            mRootNode.SetAttributeNode(att);
 
             att = atlasDoc.CreateAttribute("width");
             att.Value = SPRITE_SHEET_WIDTH.ToString();
-            rootNode.SetAttributeNode(att);
+            mRootNode.SetAttributeNode(att);
 
             att = atlasDoc.CreateAttribute("height");
             att.Value = SPRITE_SHEET_HEIGHT.ToString();
-            rootNode.SetAttributeNode(att);
+            mRootNode.SetAttributeNode(att);
 
             att = atlasDoc.CreateAttribute("page");
             att.Value = "1";
-            rootNode.SetAttributeNode(att);
+            mRootNode.SetAttributeNode(att);
 
             att = atlasDoc.CreateAttribute("totalPages");
             att.Value = mPageCount.ToString();
-            rootNode.SetAttributeNode(att);
+            mRootNode.SetAttributeNode(att);
 
             att = atlasDoc.CreateAttribute("isNormalized");
-            att.Value = "false";
-            rootNode.SetAttributeNode(att);
+            att.Value = mNormalizeUV.ToString();
+            mRootNode.SetAttributeNode(att);
 
-            XmlElement node = atlasDoc.CreateElement("groups");
-            rootNode.AppendChild(node);
+            mGroupsNode = atlasDoc.CreateElement("groups");
+            mRootNode.AppendChild(mGroupsNode);
+
+            XmlElement groupNode = atlasDoc.CreateElement("group"); ;
+            groupNode.SetAttribute("name", "group0");
+            mGroupsNode.AppendChild(groupNode);
         }
 
-        private static XmlElement CreateSpriteNode(string id, int x, int y, int width, int height)
+        private XmlElement CreateSpriteNode(string id, int x, int y, int width, int height)
         {
             XmlElement spriteNode = atlasDoc.CreateElement("sprite");
             XmlAttribute att = atlasDoc.CreateAttribute("id");
@@ -157,7 +251,7 @@ namespace PlayTime
 
         private void ProcessFileOpenClick(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
+            System.Windows.Forms.OpenFileDialog dialog = new System.Windows.Forms.OpenFileDialog();
             dialog.Multiselect = true;
             dialog.DefaultExt = ".png";
             dialog.Filter = "Image Files|*.png;*.bmp;*.jpg";
@@ -174,7 +268,7 @@ namespace PlayTime
                 {
                     text += fileNames[i] + "\n";
                 }
-                txtBox.Text = text;
+                // txtBox.Text = text;
             }
         }
 

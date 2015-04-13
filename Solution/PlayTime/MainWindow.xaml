@@ -1,18 +1,32 @@
 ﻿<Window x:Name="mWindow" x:Class="PlayTime.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Fun with WPF" Height="768" Width="1024" KeyDown="mWindow_KeyDown">
-
-    <Grid>
+        Title="Fun with WPF" Height="768" Width="1024" KeyDown="mWindow_KeyDown" Loaded="Window_Loaded">
+    <Window.Resources>
+        <XmlDataProvider x:Key="xmlData" x:Name="dataProvider" Source="c:/Users/Jeff/Documents/GitHub/WPF_Fun/Solution/PlayTime/testAtlas.xml" XPath="/SpriteSheet"/>
+        <HierarchicalDataTemplate DataType="Node" ItemsSource="{Binding XPath=./groups/group}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Group:"/>
+                <TextBlock Text="{Binding XPath=@name}"/>
+            </StackPanel>
+        </HierarchicalDataTemplate>
+    </Window.Resources>
+    <Grid DataContext="{StaticResource xmlData}">
         <Menu HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0.514,-0.032" Width="1006">
             <MenuItem Header="_File">
                 <MenuItem Header="_Open" Click="ProcessFileOpenClick"/>
             </MenuItem>
         </Menu>
-        <TreeView Margin="10,26,730,10" x:Name="treeView"></TreeView>
+        <TreeView Margin="10,26,730,10" x:Name="treeView"/>
 
-        <TextBlock x:Name="txtBox" HorizontalAlignment="Left" Height="632" Margin="432,56,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="492" RenderTransformOrigin="0.497,0.557"/>
-
+        <Grid >
+            <TextBlock x:Name="txtBlock" Width="256" Height="Auto" Margin="369,620,391,69"/>
+        </Grid>
+        <StackPanel Orientation="Horizontal">
+            <Image x:Name="imageContainer" Width="256" Height="256"/>
+            <Image x:Name="img2Container" Width="256" Height="256"/>
+        </StackPanel>
+        
         <Button x:Name="btn" Content="Button" HorizontalAlignment="Left" Margin="315,26,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="-0.398,-1.149" Click="btn_Click"/>
 
     </Grid>
