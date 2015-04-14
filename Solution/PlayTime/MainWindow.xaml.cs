@@ -14,6 +14,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml;
 
+
+
 namespace PlayTime
 {
     /// <summary>
@@ -83,6 +85,9 @@ namespace PlayTime
             
            // imageContainer.Source = bmpSource;
 
+            List<string> filesList = new List<string>() {@"c:\Users\Jeff\Documents\GitHub\2D_Retro_Clone\resources\images\galaxian.png",
+                                     @"c:\Users\Jeff\Documents\GitHub\2D_Retro_Clone\resources\images\blue_enemy\blue_enemy_1.png"};
+
             BitmapImage bmp = new BitmapImage();
             bmp.BeginInit();
             bmp.UriSource = new Uri(@"c:\Users\Jeff\Documents\GitHub\2D_Retro_Clone\resources\images\galaxian.png");
@@ -99,22 +104,57 @@ namespace PlayTime
 
             Byte[] b = new Byte[stride * height];
 
+           
+
             bmp.CopyPixels(b, stride, 0);
 
-            for (int i = 0; i < b.Length; i++ )
+            for (int i = 0; i < b.Length; i++)
             {
                 if (b[i] == 0 &&
                     b[++i] == 0 &&
-                    b[++i] == 0 && 
+                    b[++i] == 0 &&
                     b[++i] == 255)
                 {
                     b[i] = 0;
                 }
             }
+            //int spriteSheetWidth = (int)(width * .5) + width;
+            //int spriteSheetHeight = (int)(height * .5) + height;
+            //int spriteSheetStride = spriteSheetWidth * 4;
+            ////Byte[] spriteSheetArray = new byte[(int)((stride * height) * .5) + (stride * height)];
+            //Byte[] spriteSheetArray = new byte[spriteSheetStride * spriteSheetHeight];
+            //for (int i = 0; i < spriteSheetArray.Length; i++)
+            //{
+            //    spriteSheetArray[i] = 255;
+            //}
+            //Array.Copy(b, spriteSheetArray, b.Length);
+
+            System.Drawing.Bitmap myBMap = new System.Drawing.Bitmap(filesList[0]);
+            myBMap.MakeTransparent();
             BitmapSource b2 = BitmapSource.Create(width, height, bmp.DpiX, bmp.DpiY, format, null, b, stride);
             imageContainer.Source = bmp;
-            img2Container.Source = b2;
+            img2Container.Source = loadBitmap(myBMap);
             txtBlock.Text = bmp.Format.ToString();
+        }
+
+        [System.Runtime.InteropServices.DllImport("gdi32.dll")]
+        public static extern bool DeleteObject(IntPtr hObject);
+        public static BitmapSource loadBitmap(System.Drawing.Bitmap source)
+        {
+            IntPtr ip = source.GetHbitmap();
+            BitmapSource bs = null;
+            try
+            {
+                bs = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(ip,
+                   IntPtr.Zero, Int32Rect.Empty,
+                   System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
+            }
+            finally
+            {
+                DeleteObject(ip);
+            }
+
+            return bs;
         }
 
         private void InitContextMenu()

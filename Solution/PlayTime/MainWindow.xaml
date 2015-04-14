@@ -17,18 +17,20 @@
                 <MenuItem Header="_Open" Click="ProcessFileOpenClick"/>
             </MenuItem>
         </Menu>
-        <TreeView Margin="10,26,730,10" x:Name="treeView"/>
-
-        <Grid >
-            <TextBlock x:Name="txtBlock" Width="256" Height="Auto" Margin="369,620,391,69"/>
-        </Grid>
         <StackPanel Orientation="Horizontal">
-            <Image x:Name="imageContainer" Width="256" Height="256"/>
-            <Image x:Name="img2Container" Width="256" Height="256"/>
+            <TreeView x:Name="treeView" Width="256"/>
+            <Border BorderBrush="Black" BorderThickness="2" Background="Beige">
+                <Image x:Name="imageContainer" Width="256" Height="256" Stretch="None"/>
+            </Border>
+            <Border BorderBrush="Black" BorderThickness="2" Background="Beige">
+                <Image x:Name="img2Container" Width="256" Height="256" Stretch="None"/>
+            
+            </Border>
+            <ScrollViewer Width="100" Height="Auto"/>
         </StackPanel>
         
         <Button x:Name="btn" Content="Button" HorizontalAlignment="Left" Margin="315,26,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="-0.398,-1.149" Click="btn_Click"/>
-
+<TextBlock x:Name="txtBlock" Width="256" Height="Auto" Margin="369,620,391,69"/>
     </Grid>
 </Window>
     
