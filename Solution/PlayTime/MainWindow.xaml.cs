@@ -18,66 +18,158 @@ using System.Xml;
 
 namespace PlayTime
 {
-    class MyImage
+    class ImageHighlight
+    {
+        /*
+         *  Rectangle rectangle1 = new Rectangle();
+            rectangle1.Width = image1.Width;
+            rectangle1.Height = image1.Height;
+            rectangle1.StrokeThickness = 5;
+            rectangle1.Stroke = new SolidColorBrush(Colors.Blue);
+            rectangle1.StrokeDashArray = new DoubleCollection() { 5, 5 };
+         */
+        Rectangle mRec = new Rectangle();
+        DoubleCollection mStrokeDashArray = new DoubleCollection() { 5, 5 };
+        const double mStrokeThickness = 3;
+        Color mStrokeColor = Colors.Blue;
+        Image2 mImage;
+
+        public Rectangle Rectangle
+        {
+            get { return mRec; }
+        }
+
+        public ImageHighlight(Image2 image)
+        {
+            mImage = image;
+            mRec.Width = mImage.Width;
+            mRec.Height = mImage.Height;
+            mRec.Stroke = new SolidColorBrush(mStrokeColor);
+            mRec.StrokeThickness = mStrokeThickness;
+            mRec.StrokeDashArray = mStrokeDashArray;
+        }
+
+    }
+
+    class Image2
     {
         string mFilePath;
-        BitmapImage mBMP;
-        double mHeight, mWidth;
-        Image mControl;
+        BitmapImage mBMP;//the actual image in memory
+        Image mControl;//the image control to be placed on a canvas
+        ImageHighlight mHighlightRec;
+        bool mIsHighlighted = false;
         double mLeft, mTop;
 
+        /// <summary>
+        /// Path to image file.
+        /// </summary>
+        public string Path { get; set; }
 
-        public string Path
-        {
-            get { return mFilePath; }
-            set { mFilePath = value; }
-        }
+        /// <summary>
+        /// Height of image.
+        /// </summary>
+        public double Height { get; private set; }
 
-        public double Height
-        {
-            get { return mHeight; }
-        }
+        /// <summary>
+        /// Width of image.
+        /// </summary>
+        public double Width { get; private set; }
 
-        public double Width
-        {
-            get { return mWidth; }
-        }
-
+        /// <summary>
+        /// Image control for placing on a canvas.
+        /// </summary>
         public Image ImageControl
         {
             get { return mControl; }
         }
 
+        /// <summary>
+        /// Left position of image.
+        /// i.e. The minimum x value of image.
+        /// </summary>
         public double Left
         {
             get { return mLeft; }
-            set { mLeft = value; }
+            set
+            {
+                mLeft = value;
+                Canvas.SetLeft(mControl, mLeft);
+            }
         }
 
+        /// <summary>
+        /// Top position of image.
+        /// i.e. The minimum y value of image.
+        /// </summary>
         public double Top
         {
             get { return mTop; }
-            set { mTop = value; }
+            set
+            {
+                mTop = value;
+                Canvas.SetTop(mControl, mTop);
+            }
         }
 
+        /// <summary>
+        /// Rectangle shape for highlighting this image.
+        /// </summary>
+        public Rectangle HighlightRec
+        {
+            get { return mHighlightRec.Rectangle; }
+        }
 
-        public MyImage(string path)
+        /// <summary>
+        /// MyImage constructor
+        /// </summary>
+        /// <param name="path">Path to image file.</param>
+        public Image2(string path)
         {
             mFilePath = path;
             mBMP = new BitmapImage(new Uri(mFilePath));
-            mWidth = mBMP.Width;
-            mHeight = mBMP.Height;
+            Width = mBMP.Width;
+            Height = mBMP.Height;
             InitControl();
+            mHighlightRec = new ImageHighlight(this);
+            mControl.IsEnabled = true;
+            mControl.MouseLeftButtonUp += OnLeftButtonUp;
+
+
+        }
+
+        private void OnLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            Canvas canvas = mControl.Parent as Canvas;
+            if (canvas != null)
+            {
+                HighlightIt(canvas);
+            }
+        }
+
+        public void HighlightIt(Canvas canvas)
+        {
+            if (!mIsHighlighted)
+            {
+                //insert highlight rectangle before this control in canvas children
+                int i = canvas.Children.IndexOf(this.mControl);
+                Canvas.SetLeft(mHighlightRec.Rectangle, Left);
+                canvas.Children.Insert(i + 1, mHighlightRec.Rectangle);
+                mIsHighlighted = true;
+            }
+            else
+            {
+                canvas.Children.Remove(mHighlightRec.Rectangle);
+                mIsHighlighted = false;
+            }
 
         }
 
         void InitControl()
         {
-             mControl = new Image();
+            mControl = new Image();
             mControl.Source = mBMP;
             mControl.Stretch = Stretch.None;
         }
-
 
     }
 
@@ -109,39 +201,22 @@ namespace PlayTime
             Vector startPos = new Vector(0, 0);
 
             Uri baseURI = new Uri(AppDomain.CurrentDomain.BaseDirectory + @"../../resources/");
-            //BitmapImage image1 = new BitmapImage(new Uri(baseURI, "images/lobo.jpg"));
-            MyImage image1 = new MyImage(AppDomain.CurrentDomain.BaseDirectory + @"../../resources/" + "images/lobo.jpg");
+            Image2 image1 = new Image2(AppDomain.CurrentDomain.BaseDirectory + @"../../resources/" + "images/lobo.jpg");
             image1.Left = 0;
             image1.Top = 0;
-            BitmapImage image2 = new BitmapImage(new Uri(baseURI, "images/usa.png"));
-
-            //Image imgControl = new Image();
-            //imgControl.Source = image1;
-            //imgControl.Stretch = Stretch.None;
-            Canvas.SetLeft(image1.ImageControl, image1.Left);
-            Rectangle rectangle1 = new Rectangle();
-            rectangle1.Width = image1.Width;
-            rectangle1.Height = image1.Height;
-            rectangle1.StrokeThickness = 5;
-            rectangle1.Stroke = new SolidColorBrush(Colors.Blue);
-            rectangle1.StrokeDashArray = new DoubleCollection() { 5, 5 };
+            //BitmapImage image2 = new BitmapImage(new Uri(baseURI, "images/usa.png"));
+            Image2 image2 = new Image2(AppDomain.CurrentDomain.BaseDirectory + @"../../resources/" + "images/usa.png");
+            //Canvas.SetLeft(image1.ImageControl, image1.Left);
 
             startPos.X += image1.Width + 10;
-
-
-
-            Image imgControl2 = new Image();
-            imgControl2.Source = image2;
-            imgControl2.Stretch = Stretch.None;
-            Canvas.SetLeft(imgControl2, startPos.X);
+            image2.Left = startPos.X;
 
             canvasControl.Width = image1.Width + image2.Width + 20;
             canvasControl.Height = image1.Height + image2.Height + 10;
 
 
             canvasControl.Children.Add(image1.ImageControl);
-            canvasControl.Children.Add(rectangle1);
-            canvasControl.Children.Add(imgControl2);
+            canvasControl.Children.Add(image2.ImageControl);
 
             //InitContextMenu();
             //XmlNode groupsNode = rootNode.SelectSingleNode("groups");
