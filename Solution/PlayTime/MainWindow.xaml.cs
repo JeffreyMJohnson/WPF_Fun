@@ -18,6 +18,70 @@ using System.Xml;
 
 namespace PlayTime
 {
+    class MyImage
+    {
+        string mFilePath;
+        BitmapImage mBMP;
+        double mHeight, mWidth;
+        Image mControl;
+        double mLeft, mTop;
+
+
+        public string Path
+        {
+            get { return mFilePath; }
+            set { mFilePath = value; }
+        }
+
+        public double Height
+        {
+            get { return mHeight; }
+        }
+
+        public double Width
+        {
+            get { return mWidth; }
+        }
+
+        public Image ImageControl
+        {
+            get { return mControl; }
+        }
+
+        public double Left
+        {
+            get { return mLeft; }
+            set { mLeft = value; }
+        }
+
+        public double Top
+        {
+            get { return mTop; }
+            set { mTop = value; }
+        }
+
+
+        public MyImage(string path)
+        {
+            mFilePath = path;
+            mBMP = new BitmapImage(new Uri(mFilePath));
+            mWidth = mBMP.Width;
+            mHeight = mBMP.Height;
+            InitControl();
+
+        }
+
+        void InitControl()
+        {
+             mControl = new Image();
+            mControl.Source = mBMP;
+            mControl.Stretch = Stretch.None;
+        }
+
+
+    }
+
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -42,6 +106,43 @@ namespace PlayTime
         {
             InitializeComponent();
             InitAtlasDoc();
+            Vector startPos = new Vector(0, 0);
+
+            Uri baseURI = new Uri(AppDomain.CurrentDomain.BaseDirectory + @"../../resources/");
+            //BitmapImage image1 = new BitmapImage(new Uri(baseURI, "images/lobo.jpg"));
+            MyImage image1 = new MyImage(AppDomain.CurrentDomain.BaseDirectory + @"../../resources/" + "images/lobo.jpg");
+            image1.Left = 0;
+            image1.Top = 0;
+            BitmapImage image2 = new BitmapImage(new Uri(baseURI, "images/usa.png"));
+
+            //Image imgControl = new Image();
+            //imgControl.Source = image1;
+            //imgControl.Stretch = Stretch.None;
+            Canvas.SetLeft(image1.ImageControl, image1.Left);
+            Rectangle rectangle1 = new Rectangle();
+            rectangle1.Width = image1.Width;
+            rectangle1.Height = image1.Height;
+            rectangle1.StrokeThickness = 5;
+            rectangle1.Stroke = new SolidColorBrush(Colors.Blue);
+            rectangle1.StrokeDashArray = new DoubleCollection() { 5, 5 };
+
+            startPos.X += image1.Width + 10;
+
+
+
+            Image imgControl2 = new Image();
+            imgControl2.Source = image2;
+            imgControl2.Stretch = Stretch.None;
+            Canvas.SetLeft(imgControl2, startPos.X);
+
+            canvasControl.Width = image1.Width + image2.Width + 20;
+            canvasControl.Height = image1.Height + image2.Height + 10;
+
+
+            canvasControl.Children.Add(image1.ImageControl);
+            canvasControl.Children.Add(rectangle1);
+            canvasControl.Children.Add(imgControl2);
+
             //InitContextMenu();
             //XmlNode groupsNode = rootNode.SelectSingleNode("groups");
             //if (groupsNode != null)
@@ -61,30 +162,30 @@ namespace PlayTime
             //    groupsNode.AppendChild(groupNode);
             //}
 
-            UpdateTreeView();
+            // UpdateTreeView();
 
-           // double dpi = 96;
-           // int width = 128;
-           // int height = 128;
-            
-          
-           //// byte[] pixelData = new byte[width * height];
-           // Color[] pixelData = new Color[width * height];
-           // for (int y = 0; y < height; y++)
-           // {
-           //     int yIndex = y * width;
-           //     for (int x = 0; x < width; x++)
-           //     {
-           //         //pixelData[x + yIndex] = 
-           //     }
-           // }
-           // BitmapSource bmpSource = BitmapSource.Create(width, height, dpi, dpi, PixelFormats.Gray8, null, pixelData, width);
+            // double dpi = 96;
+            // int width = 128;
+            // int height = 128;
 
-           // imageContainer.Width = width + 10;
-           // imageContainer.Height = height + 10;
-            
-           // imageContainer.Source = bmpSource;
 
+            //// byte[] pixelData = new byte[width * height];
+            // Color[] pixelData = new Color[width * height];
+            // for (int y = 0; y < height; y++)
+            // {
+            //     int yIndex = y * width;
+            //     for (int x = 0; x < width; x++)
+            //     {
+            //         //pixelData[x + yIndex] = 
+            //     }
+            // }
+            // BitmapSource bmpSource = BitmapSource.Create(width, height, dpi, dpi, PixelFormats.Gray8, null, pixelData, width);
+
+            // imageContainer.Width = width + 10;
+            // imageContainer.Height = height + 10;
+
+            // imageContainer.Source = bmpSource;
+            /*
             List<string> filesList = new List<string>() {@"c:\Users\Jeff\Documents\GitHub\2D_Retro_Clone\resources\images\galaxian.png",
                                      @"c:\Users\Jeff\Documents\GitHub\2D_Retro_Clone\resources\images\blue_enemy\blue_enemy_1.png"};
 
@@ -118,6 +219,7 @@ namespace PlayTime
                     b[i] = 0;
                 }
             }
+             */
             //int spriteSheetWidth = (int)(width * .5) + width;
             //int spriteSheetHeight = (int)(height * .5) + height;
             //int spriteSheetStride = spriteSheetWidth * 4;
@@ -129,12 +231,6 @@ namespace PlayTime
             //}
             //Array.Copy(b, spriteSheetArray, b.Length);
 
-            System.Drawing.Bitmap myBMap = new System.Drawing.Bitmap(filesList[0]);
-            myBMap.MakeTransparent();
-            BitmapSource b2 = BitmapSource.Create(width, height, bmp.DpiX, bmp.DpiY, format, null, b, stride);
-            imageContainer.Source = bmp;
-            img2Container.Source = loadBitmap(myBMap);
-            txtBlock.Text = bmp.Format.ToString();
         }
 
         [System.Runtime.InteropServices.DllImport("gdi32.dll")]
@@ -195,36 +291,36 @@ namespace PlayTime
             groupNode.AppendChild(CreateSpriteNode(id, x, y, width, height));
         }
 
-        private void UpdateTreeView()
-        {
-            XmlNode groupsNode = mRootNode.FirstChild;
-            TreeViewItem root = new TreeViewItem();
-            root.Header = "SpriteSheet";
-            int counter = 0;
-            foreach (XmlNode groupNode in groupsNode.ChildNodes)
-            {
-                TreeViewItem item = new TreeViewItem();
-                item.Header = groupNode.Attributes.GetNamedItem("name").Value;
-                //item.ContextMenu = mGroupNameContextMenu;
-                item.Name = "group" + counter.ToString();
-                counter++;
-                item.MouseRightButtonDown += GroupRenameClick;
-                foreach (XmlElement spriteElement in groupNode.ChildNodes)
-                {
-                    TreeViewItem spriteId = new TreeViewItem();
-                    spriteId.Header = spriteElement.Attributes.GetNamedItem("id").Value;
-                    item.Items.Add(spriteId);
-                }
+        //private void UpdateTreeView()
+        //{
+        //    XmlNode groupsNode = mRootNode.FirstChild;
+        //    TreeViewItem root = new TreeViewItem();
+        //    root.Header = "SpriteSheet";
+        //    int counter = 0;
+        //    foreach (XmlNode groupNode in groupsNode.ChildNodes)
+        //    {
+        //        TreeViewItem item = new TreeViewItem();
+        //        item.Header = groupNode.Attributes.GetNamedItem("name").Value;
+        //        //item.ContextMenu = mGroupNameContextMenu;
+        //        item.Name = "group" + counter.ToString();
+        //        counter++;
+        //        item.MouseRightButtonDown += GroupRenameClick;
+        //        foreach (XmlElement spriteElement in groupNode.ChildNodes)
+        //        {
+        //            TreeViewItem spriteId = new TreeViewItem();
+        //            spriteId.Header = spriteElement.Attributes.GetNamedItem("id").Value;
+        //            item.Items.Add(spriteId);
+        //        }
 
-                item.ExpandSubtree();
+        //        item.ExpandSubtree();
 
-                root.Items.Add(item);
-                root.ExpandSubtree();
-            }
-            treeView.Items.Add(root);
+        //        root.Items.Add(item);
+        //        root.ExpandSubtree();
+        //    }
+        //    treeView.Items.Add(root);
 
 
-        }
+        //}
 
 
         private void InitAtlasDoc()
@@ -322,7 +418,7 @@ namespace PlayTime
 
         private void btn_Click(object sender, RoutedEventArgs e)
         {
-            treeView.Items.Add("i'm new");
+            //treeView.Items.Add("i'm new");
         }
     }
 }
