@@ -139,15 +139,15 @@ namespace PlayTime
 
         private void OnLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            Canvas canvas = mControl.Parent as Canvas;
-            if (canvas != null)
-            {
-                HighlightIt(canvas);
-            }
+            
+             HighlightIt();
         }
 
-        public void HighlightIt(Canvas canvas)
+        public void HighlightIt()
         {
+            Canvas canvas = mControl.Parent as Canvas;
+            if (canvas == null)
+                return;
             if (!mIsHighlighted)
             {
                 //insert highlight rectangle before this control in canvas children
@@ -204,9 +204,7 @@ namespace PlayTime
             Image2 image1 = new Image2(AppDomain.CurrentDomain.BaseDirectory + @"../../resources/" + "images/lobo.jpg");
             image1.Left = 0;
             image1.Top = 0;
-            //BitmapImage image2 = new BitmapImage(new Uri(baseURI, "images/usa.png"));
             Image2 image2 = new Image2(AppDomain.CurrentDomain.BaseDirectory + @"../../resources/" + "images/usa.png");
-            //Canvas.SetLeft(image1.ImageControl, image1.Left);
 
             startPos.X += image1.Width + 10;
             image2.Left = startPos.X;
