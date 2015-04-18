@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Fun with WPF" Height="768" Width="1024" KeyDown="mWindow_KeyDown" Loaded="Window_Loaded">
     
-    <ScrollViewer x:Name="scrollControl" Width="Auto" Height="Auto" HorizontalScrollBarVisibility="Auto">
+    <ScrollViewer x:Name="scrollControl" Width="Auto" Height="Auto" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
         <Canvas x:Name="canvasControl" Background="AliceBlue">
             <!--
             <Canvas>
