@@ -130,8 +130,8 @@ namespace PlayTime
 
         private void OnLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            
-             HighlightIt();
+
+            HighlightIt();
         }
 
         public void HighlightIt()
@@ -197,15 +197,17 @@ namespace PlayTime
         }
 
 
-        public SpriteSheet(Canvas canvas, string basePath, bool normalize)
+        public SpriteSheet(Canvas canvas, string basePath, double width, double height, bool normalize)
         {
             mBasePath = basePath;
             mIsNormalized = normalize;
             InitAtlasDoc();
             mCanvasControl = canvas;
+            Width = width;
+            Height = height;
         }
 
-        
+
         public void AddSprite(string relativePath)
         {
             Image2 img = new Image2(mBasePath + relativePath);
@@ -232,7 +234,7 @@ namespace PlayTime
             //att = mAtlasDoc.CreateAttribute("height");
             //att.Value = height.ToString();
             //spriteNode.SetAttributeNode(att);
-             
+
 
             mSpritesList.Add(img);
         }
@@ -240,10 +242,10 @@ namespace PlayTime
         void GetNextImagePosition(Image2 newImage)
         {
             if (mSpritesList.Count == 0) return;
-            
+
             Image2 lastImage = mSpritesList[mSpritesList.Count - 1];
             //check if need new row
-            if(lastImage.Left + lastImage.Width + newImage.Width > Width)
+            if (lastImage.Left + lastImage.Width + newImage.Width > Width)
             {
                 newImage.Left = 0;
                 newImage.Top = GetHighestYInRow();
@@ -258,7 +260,7 @@ namespace PlayTime
         double GetHighestYInRow()
         {
             double result = 0;
-            foreach(Image2 img in mSpritesList)
+            foreach (Image2 img in mSpritesList)
             {
                 if (img.Top + img.Height > result) result = img.Top + img.Height;
             }
@@ -293,11 +295,11 @@ namespace PlayTime
             att.Value = mIsNormalized.ToString();
             mRootNode.SetAttributeNode(att);
 
-           // mGroupsNode = mAtlasDoc.CreateElement("groups");
+            // mGroupsNode = mAtlasDoc.CreateElement("groups");
             //mRootNode.AppendChild(mGroupsNode);
 
             XmlElement groupNode = mAtlasDoc.CreateElement("group"); ;
-           // groupNode.SetAttribute("name", "group0");
+            // groupNode.SetAttribute("name", "group0");
             mRootNode.AppendChild(groupNode);
         }
     }
@@ -328,19 +330,21 @@ namespace PlayTime
             InitializeComponent();
             InitAtlasDoc();
             Vector startPos = new Vector(0, 0);
+            
+            SpriteSheet sheet = new SpriteSheet(canvasControl, AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\test_images\", 512, 256, false);
 
-            Uri baseURI = new Uri(AppDomain.CurrentDomain.BaseDirectory + @"../../resources/");
+            for (int i = 0; i < 10; i++)
+            {
+                sheet.AddSprite(@"med\eight_ball_med.png");
+            }
 
-            SpriteSheet sheet = new SpriteSheet(canvasControl, AppDomain.CurrentDomain.BaseDirectory + @"../../resources/", false);
-            sheet.Width = 1024;
-            sheet.Height = 768;
-            sheet.AddSprite("images/lobo.jpg");
-            sheet.AddSprite("images/usa.png");
+                sheet.AddSprite(@"med\green_square_med.png");
+            sheet.AddSprite(@"med\green_square_med.png");
             //Image2 image1 = new Image2(AppDomain.CurrentDomain.BaseDirectory + @"../../resources/" + "images/lobo.jpg");
             //image1.Left = 0;
             //image1.Top = 0;
             //BitmapImage image2 = new BitmapImage(new Uri(baseURI, "images/usa.png"));
-           // Image2 image2 = new Image2(AppDomain.CurrentDomain.BaseDirectory + @"../../resources/" + "images/usa.png");
+            // Image2 image2 = new Image2(AppDomain.CurrentDomain.BaseDirectory + @"../../resources/" + "images/usa.png");
             //Canvas.SetLeft(image1.ImageControl, image1.Left);
 
 
@@ -352,7 +356,7 @@ namespace PlayTime
 
 
             //canvasControl.Children.Add(image1.ImageControl);
-           // canvasControl.Children.Add(image2.ImageControl);
+            // canvasControl.Children.Add(image2.ImageControl);
 
             //InitContextMenu();
             //XmlNode groupsNode = rootNode.SelectSingleNode("groups");
