@@ -1,16 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml;
 
@@ -320,17 +314,23 @@ namespace PlayTime
         private int mPageCount = 1;
         private bool mNormalizeUV = false;
 
+        SpriteSheet gSheet;
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("foo");
+            NewSheetDialog dialog = new NewSheetDialog();
+            if (dialog.ShowDialog() == true)
+            {
+                MessageBox.Show("Width: " + dialog.Width + "\nHeight: " + dialog.Height);
+            }
         }
 
         public MainWindow()
         {
             InitializeComponent();
-            InitAtlasDoc();
+            //InitAtlasDoc();
             Vector startPos = new Vector(0, 0);
-            
+
             SpriteSheet sheet = new SpriteSheet(canvasControl, AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\test_images\", 512, 256, false);
 
             for (int i = 0; i < 10; i++)
@@ -338,8 +338,12 @@ namespace PlayTime
                 sheet.AddSprite(@"med\eight_ball_med.png");
             }
 
-                sheet.AddSprite(@"med\green_square_med.png");
             sheet.AddSprite(@"med\green_square_med.png");
+            sheet.AddSprite(@"med\green_square_med.png");
+
+            
+
+
             //Image2 image1 = new Image2(AppDomain.CurrentDomain.BaseDirectory + @"../../resources/" + "images/lobo.jpg");
             //image1.Left = 0;
             //image1.Top = 0;
@@ -468,30 +472,6 @@ namespace PlayTime
             return bs;
         }
 
-        private void InitContextMenu()
-        {
-            InitGroupNameContextMenu();
-        }
-
-        private void InitGroupNameContextMenu()
-        {
-            mGroupNameContextMenu = new ContextMenu();
-            MenuItem mi = new MenuItem();
-            mi.Header = "_Rename Group";
-            mi.Click += GroupRenameClick;
-            mGroupNameContextMenu.Items.Add(mi);
-        }
-
-        private void GroupRenameClick(object sender, EventArgs e)
-        {
-            TreeViewItem m = sender as TreeViewItem;
-            if (m != null)
-            {
-                Console.WriteLine(m.Name);
-
-            }
-        }
-
         /// <summary>
         /// creates s sprite child node and appends it to the given group node.
         /// </summary>
@@ -505,37 +485,6 @@ namespace PlayTime
         {
             groupNode.AppendChild(CreateSpriteNode(id, x, y, width, height));
         }
-
-        //private void UpdateTreeView()
-        //{
-        //    XmlNode groupsNode = mRootNode.FirstChild;
-        //    TreeViewItem root = new TreeViewItem();
-        //    root.Header = "SpriteSheet";
-        //    int counter = 0;
-        //    foreach (XmlNode groupNode in groupsNode.ChildNodes)
-        //    {
-        //        TreeViewItem item = new TreeViewItem();
-        //        item.Header = groupNode.Attributes.GetNamedItem("name").Value;
-        //        //item.ContextMenu = mGroupNameContextMenu;
-        //        item.Name = "group" + counter.ToString();
-        //        counter++;
-        //        item.MouseRightButtonDown += GroupRenameClick;
-        //        foreach (XmlElement spriteElement in groupNode.ChildNodes)
-        //        {
-        //            TreeViewItem spriteId = new TreeViewItem();
-        //            spriteId.Header = spriteElement.Attributes.GetNamedItem("id").Value;
-        //            item.Items.Add(spriteId);
-        //        }
-
-        //        item.ExpandSubtree();
-
-        //        root.Items.Add(item);
-        //        root.ExpandSubtree();
-        //    }
-        //    treeView.Items.Add(root);
-
-
-        //}
 
 
         private void InitAtlasDoc()

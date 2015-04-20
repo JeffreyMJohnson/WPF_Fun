@@ -7,8 +7,8 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>-->
-        <ScrollViewer x:Name="scrollControl" HorizontalScrollBarVisibility="Auto" Grid.Column="1">
-            <Canvas x:Name="canvasControl" Background="AliceBlue">
+    <ScrollViewer x:Name="scrollControl" HorizontalScrollBarVisibility="Auto" Grid.Column="1">
+        <Canvas x:Name="canvasControl" Background="AliceBlue">
                 <!--
             <Canvas>
                 <Image Stretch="None" Source="C:\Users\Jeff\Documents\GitHub\WPF_Fun\Solution\PlayTime\resources\images\lobo.jpg"/>

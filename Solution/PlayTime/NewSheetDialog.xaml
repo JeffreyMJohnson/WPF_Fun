@@ -1,0 +1,17 @@
+﻿<Window x:Class="PlayTime.NewSheetDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Play Time" x:Name="myDialog" Height="150" Width="300">
+    <StackPanel Orientation="Vertical">
+        <Label HorizontalAlignment="Center">Enter New Sheet Data:</Label>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Label Content="Width "></Label>
+            <TextBox x:Name="width" Width="50"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Label>Height</Label>
+            <TextBox x:Name="height" Width="50"/>
+        </StackPanel>
+        <Button Click="Button_Click" Width="75">_Ok</Button>
+    </StackPanel>
+</Window>
